@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:context=".fragments.ContactFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/details_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="10dp"
+            app:contentPadding="10dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/contact">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/contactTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Contact: "
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <TextView
+                    android:id="@+id/contact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:autoLink="phone"
+                    android:text="@string/school_contact"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    app:layout_constraintHorizontal_weight="0"
+                    app:layout_constraintLeft_toRightOf="@id/contactTextView"
+                    app:layout_constraintBottom_toBottomOf="@id/contactTextView"
+                    app:layout_constraintTop_toTopOf="@id/contactTextView" />
+
+                <TextView
+                    android:id="@+id/websiteTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="Website: "
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/contactTextView" />
+
+                <TextView
+                    android:id="@+id/weblink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:autoLink="web"
+                    android:text="www.google.com"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintBottom_toBottomOf="@id/websiteTextView"
+                    app:layout_constraintLeft_toRightOf="@id/websiteTextView"
+                    app:layout_constraintTop_toBottomOf="@id/contact"
+                    app:layout_constraintTop_toTopOf="@id/websiteTextView" />
+
+                <!-- facebook -->
+
+                <TextView
+                    android:id="@+id/facebookTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="Facebook: "
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/websiteTextView" />
+
+                <TextView
+                    android:id="@+id/facebook"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:autoLink="web"
+                    android:text="www.facebook.com"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintBottom_toBottomOf="@id/facebookTextView"
+                    app:layout_constraintLeft_toRightOf="@id/facebookTextView"
+                    app:layout_constraintTop_toBottomOf="@id/weblink"
+                    app:layout_constraintTop_toTopOf="@id/facebookTextView" />
+
+                <!-- instagram -->
+
+                <TextView
+                    android:id="@+id/instagramTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="Instagram: "
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/facebookTextView" />
+
+                <TextView
+                    android:id="@+id/instagram"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:autoLink="web"
+                    android:text="www.instragram.com"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintBottom_toBottomOf="@id/instagramTextView"
+                    app:layout_constraintLeft_toRightOf="@id/instagramTextView"
+                    app:layout_constraintTop_toBottomOf="@id/facebook"
+                    app:layout_constraintTop_toTopOf="@id/instagramTextView" />
+
+                <!-- other contact -->
+
+                <TextView
+                    android:id="@+id/other_contactTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="Other Contact: "
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/instagramTextView" />
+
+                <TextView
+                    android:id="@+id/other_contact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:autoLink="phone"
+                    android:text="0912-345-6789"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintBottom_toBottomOf="@id/other_contactTextView"
+                    app:layout_constraintLeft_toRightOf="@id/other_contactTextView"
+                    app:layout_constraintTop_toBottomOf="@id/instagram"
+                    app:layout_constraintTop_toTopOf="@id/other_contactTextView" />
+
+                <!-- other site -->
+
+                <TextView
+                    android:id="@+id/other_siteTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="Other Site: "
+                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/other_contactTextView" />
+
+                <TextView
+                    android:id="@+id/other_site"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:autoLink="web"
+                    android:text="www.google.com"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    app:layout_constraintBottom_toBottomOf="@id/other_siteTextView"
+                    app:layout_constraintLeft_toRightOf="@id/other_siteTextView"
+                    app:layout_constraintTop_toBottomOf="@id/other_contact"
+                    app:layout_constraintTop_toTopOf="@id/other_siteTextView" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+    </ScrollView>
+
+
+</FrameLayout>

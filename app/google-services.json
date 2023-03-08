@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1039868308295",
+    "firebase_url": "https://arapaapp-31fbf-default-rtdb.firebaseio.com",
+    "project_id": "arapaapp-31fbf",
+    "storage_bucket": "arapaapp-31fbf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1039868308295:android:532b9b1c317fff3c603a62",
+        "android_client_info": {
+          "package_name": "com.arapa.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1039868308295-66q2aie6mcc2qs0knte0msce2ctkor14.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDU8jCS8ZS1ogm0qq1uIwUDGnNBd_N8GYA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1039868308295-66q2aie6mcc2qs0knte0msce2ctkor14.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

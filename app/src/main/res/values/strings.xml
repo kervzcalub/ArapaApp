@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Arapa App</string>
+    <string name="search_school">Search School</string>
+    <string name="school_name">School Name</string>
+    <string name="school_address">School Address</string>
+    <string name="school_contact">School Contact</string>
+    <string name="lipsum">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
+    <string name="about">About:</string>
+    <string name="courses_offered">Courses Offered:</string>
+    <string name="mapbox_access_token">sk.eyJ1IjoiYXJhcGFhcHB0aGVzaXMiLCJhIjoiY2w5MWMyeDR2MGExbjNwbGN6N3dhYXIydSJ9.28bnqdD1DRqCNcL3AiWZOQ</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
