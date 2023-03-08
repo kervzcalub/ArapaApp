@@ -29,6 +29,7 @@ public class SearchTask extends AsyncTask<String, Void, MatrixCursor> {
         for (School school : schoolArrayList) {
             if (school.getName().toLowerCase().contains(newText.toLowerCase()) ||
                     school.getAddress().toLowerCase().contains(newText.toLowerCase())) {
+
                 matchingSchools.add(school);
             }
         }

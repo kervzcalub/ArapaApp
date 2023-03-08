@@ -21,6 +21,7 @@ import com.arapa.app.R;
 import com.arapa.app.util.School;
 import com.arapa.app.util.Utils;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
@@ -51,7 +52,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         holder.school_logo.setImageBitmap(Utils.getSchoolLogo(context, school));
         holder.name.setText(school.getName());
         holder.address.setText(school.getAddress());
-        holder.distance.setText(school.getContact());
+        double distance_km = school.getDistance();
+        DecimalFormat df = new DecimalFormat("#,###.##");
+        String distance_format = df.format(distance_km);
+        holder.distance.setText("Distance: " + distance_format + "KM");
         holder.school = school;
         holder.itemView.startAnimation(animation);
 

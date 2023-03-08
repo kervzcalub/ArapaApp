@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
@@ -58,18 +59,20 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.maps.UiSettings;
 import com.mapbox.turf.TurfMeasurement;
 
+import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class HomeActivity extends ActivityBase implements OnMapReadyCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, CompoundButton.OnCheckedChangeListener {
+public class HomeActivity extends ActivityBase implements OnMapReadyCallback, SearchView.OnQueryTextListener, SearchView.OnSuggestionListener, CompoundButton.OnCheckedChangeListener,
+                                                            MyAdapter.ItemSelected{
 
     private SearchView searchView;
-
-
-    //private ConstraintLayout details_holder;
 
     private MyCursorAdapter cursor_adapter;
 
@@ -85,6 +88,10 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
     private RecyclerView schoolListView;
     private MyAdapter myAdapter;
 
+    private ArrayList<School> schoolSearchList;
+    private ArrayList<School> nearestSchool;
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,23 +119,95 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
         seniorhigh_checkbox.setOnCheckedChangeListener(this);
         college_checkbox.setOnCheckedChangeListener(this);
 
+        mapView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                int action = motionEvent.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        view.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
 
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        view.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
 
+                // Handle ListView touch events.
+                view.onTouchEvent(motionEvent);
+                return true;
+            }
+        });
+
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void initSchoolListView() {
+        nearestSchool = new ArrayList<>();
+        if(nearestSchool.size() > 0){
+            nearestSchool.clear();
+        }
+        for(School schools : schoolSearchList){
+            //add 5 schools to nearestSchool list
+            if(nearestSchool.size() < 5){
+                nearestSchool.add(schools);
+            }
+        }
         schoolListView = findViewById(R.id.school_list);
         schoolListView.setLayoutManager(new LinearLayoutManager(this));
-        myAdapter = new MyAdapter(this, sortedSchool, this);
+        myAdapter = new MyAdapter(this, nearestSchool, this);
         schoolListView.setAdapter(myAdapter);
+        schoolListView.setOnTouchListener(new ListView.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                int action = motionEvent.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        // Disallow ScrollView to intercept touch events.
+                        view.getParent().requestDisallowInterceptTouchEvent(true);
+                        break;
+
+                    case MotionEvent.ACTION_UP:
+                        // Allow ScrollView to intercept touch events.
+                        view.getParent().requestDisallowInterceptTouchEvent(false);
+                        break;
+                }
+
+                // Handle ListView touch events.
+                view.onTouchEvent(motionEvent);
+                return true;
+            }
+        });
+    }
+
+    private void sortByDistance() {
+        Collections.sort(schoolArrayList, new Comparator<School>() {
+            public int compare(School s1, School s2) {
+                double distance1 = s1.getDistance();
+                double distance2 = s2.getDistance();
+                if (distance1 < distance2) {
+                    return -1;
+                } else if (distance1 > distance2) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            }
+        });
     }
 
     private void showDetailsDialog() {
         new SchoolViewDialog(this, school).show(getSupportFragmentManager(), "SCHOOL VIEW DIALOG");
     }
 
-    private void setup_search_cursor() {
+    private void setup_search_cursor(ArrayList<School> list) {
+        schoolSearchList = list;
         String[] columns = {"_id", "suggest_school_1", "suggest_school_2", "school_distance", "suggest_school_logo", "suggest_school_id"};
         MatrixCursor cursor = new MatrixCursor(columns);
-        for (int i = 0; i < schoolArrayList.size(); i++) {
-            School school = schoolArrayList.get(i);
+        for (int i = 0; i < list.size(); i++) {
+            School school = list.get(i);
             cursor.addRow(new Object[]{i, school.getName(), school.getAddress(), school.getDistance(), Utils.getBitmapAsByteArray(Utils.getSchoolLogo(this, school)), school.getSchool_id()});
         }
         cursor_adapter = new MyCursorAdapter(this, cursor);
@@ -162,6 +241,7 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
                 locationComponent = mapboxMap.getLocationComponent();
                 locationComponent.activateLocationComponent(locationComponentActivationOptions);
                 locationComponent.setLocationComponentEnabled(true);
+
 
 
                 double userLongitude = locationComponent.getLastKnownLocation().getLongitude();
@@ -202,14 +282,9 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
                     }
                 });
 
-                setup_search_cursor();
-
-                List<Marker> markerList = mapboxMap.getMarkers();
-                for (int m = 0; m < markerList.size(); m++) {
-                    String title = markerList.get(m).getTitle();
-                    String snippet = markerList.get(m).getSnippet();
-                    Log.d("ARAPA APP", "Title: " + title + " Snippet: " + snippet);
-                }
+                sortByDistance();
+                setup_search_cursor(schoolArrayList);
+                initSchoolListView();
             }
         });
     }
@@ -339,7 +414,7 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        searchtask = (SearchTask) new SearchTask(HomeActivity.this, schoolArrayList, cursor_adapter)
+        searchtask = (SearchTask) new SearchTask(HomeActivity.this, schoolSearchList, cursor_adapter)
                 .execute(newText);
 //        if (newText.equals("")) {
 //            details_holder.setVisibility(View.GONE);
@@ -368,9 +443,9 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
         @SuppressLint("Range")
         String selected_suggestion = cursor.getString(cursor.getColumnIndex("suggest_school_id"));
 
-        for (int i = 0; i < schoolArrayList.size(); i++) {
-            if (selected_suggestion.equals(schoolArrayList.get(i).getSchool_id())) {
-                school = schoolArrayList.get(i);
+        for (int i = 0; i < schoolSearchList.size(); i++) {
+            if (selected_suggestion.equals(schoolSearchList.get(i).getSchool_id())) {
+                school = schoolSearchList.get(i);
                 showDetailsDialog();
                 move_camera(school);
                 break;
@@ -380,6 +455,8 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
     }
 
     private boolean[] selectedTypes = new boolean[4];
+    // will return as {true, false, false, false} if only primary is checked, and so on
+
     @Override
     public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
         int id = compoundButton.getId();
@@ -409,12 +486,19 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
         if (noCheckboxChecked) {
             double userLongitude = locationComponent.getLastKnownLocation().getLongitude();
             double userLatitude = locationComponent.getLastKnownLocation().getLatitude();
+            //markers and search cursor reset
             setup_markers(userLongitude, userLatitude);
+            setup_search_cursor(schoolArrayList);
+            initSchoolListView();
             return;
         }
         ArrayList<School> filteredList = filterByType(selectedTypes);
+        setup_search_cursor(filteredList);
+        nearestSchool.clear();
         for (int i = 0; i < filteredList.size(); i++) {
-
+            if(nearestSchool.size() <= 5){
+                nearestSchool.add(filteredList.get(i));
+            }
             String name = filteredList.get(i).getName();
             double longitude = filteredList.get(i).getLongitude();
             double latitude = filteredList.get(i).getLatitude();
@@ -438,6 +522,7 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
             }
 
         }
+        myAdapter.notifyDataSetChanged();
     }
 
     private ArrayList<School> filterByType(boolean[] selectedTypes) {
@@ -456,20 +541,10 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
     }
 
 
-
-    private void add_filtered_marker(int id, boolean isChecked) {
-        mapboxMap.clear();
-        IconFactory iconFactory = IconFactory.getInstance(this);
-        Icon icon = null;
-    }
-
-    private void remove_markers(String type) {
-        List<Marker> markerList = mapboxMap.getMarkers();
-        for (int i = 0; i < markerList.size(); i++) {
-            Marker marker = markerList.get(i);
-            if (marker.getSnippet().equals(type)) {
-                mapboxMap.removeMarker(marker);
-            }
-        }
+    @Override
+    public void itemSelected(School school) {
+        Intent intent = new Intent(this, SchoolActivity.class);
+        intent.putExtra("SCHOOL", school);
+        startActivity(intent);
     }
 }

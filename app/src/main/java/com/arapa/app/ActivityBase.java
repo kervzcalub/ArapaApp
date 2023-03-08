@@ -28,6 +28,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -93,57 +95,6 @@ public class ActivityBase extends AppCompatActivity {
         }
     }
 
-
-    public void getRoutes(Context context, School school, double userLongitude, double userLatitude) {
-        Point userPoint = Point.fromLngLat(userLongitude, userLatitude);
-        Point schoolPoint = Point.fromLngLat(school.getLongitude(), school.getLatitude());
-        List<Point> pointList = new ArrayList<>();
-        pointList.add(userPoint);
-        pointList.add(schoolPoint);
-        for (Point p : pointList) {
-            Log.d("ARAPA APP", p.toString());
-        }
-
-        MapboxNavigation navigation = new MapboxNavigation(MapboxNavigation.defaultNavigationOptionsBuilder(this,
-                getString(R.string.mapbox_access_token)).build());
-
-        navigation.requestRoutes(RouteOptions.builder()
-                .coordinates(pointList)
-                .profile(DirectionsCriteria.PROFILE_DRIVING)
-                .geometries(RouteUrl.GEOMETRY_POLYLINE6)
-                .requestUuid(UUID.randomUUID().toString())
-                .user("mapbox")
-                .baseUrl("https://api.mapbox.com/")
-                .overview(DirectionsCriteria.OVERVIEW_FULL)
-                .accessToken(Mapbox.getAccessToken())
-                .alternatives(true)
-                .build(), new RoutesRequestCallback() {
-            @Override
-            public void onRoutesReady(@NonNull List<? extends DirectionsRoute> list) {
-                if (!list.isEmpty()) {
-                    Toast.makeText(context, "Routes Ready", Toast.LENGTH_LONG).show();
-                    route = list.get(0).toJson();
-                    Log.d("ARAPA APP", list.get(0).toJson());
-                    progressDialog.dismiss();
-                    Intent intent = new Intent(context, NavigationActivity.class);
-                    intent.putExtra("route", route);
-                    startActivity(intent);
-                } else {
-                    Log.d("ARAPA APP", "No routes");
-                }
-            }
-
-            @Override
-            public void onRoutesRequestFailure(@NonNull Throwable throwable, @NonNull RouteOptions routeOptions) {
-                Log.d("ARAPA APP", throwable.getMessage() + ":FAILURE");
-            }
-
-            @Override
-            public void onRoutesRequestCanceled(@NonNull RouteOptions routeOptions) {
-                Log.d("ARAPA APP", "Route Cancelled");
-            }
-        });
-    }
 
 
     /** DO NOT DELETE

@@ -28,6 +28,7 @@ public class CoursesFragment extends Fragment {
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -36,7 +37,12 @@ public class CoursesFragment extends Fragment {
 
         courses_listView = view.findViewById(R.id.courseList);
         courses = school.getCourses_list();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, courses);
+        // Create an ArrayAdapter from List
+
+
+
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item , courses);
         courses_listView.setAdapter(adapter);
         courses_listView.setOnTouchListener(new ListView.OnTouchListener() {
             @Override

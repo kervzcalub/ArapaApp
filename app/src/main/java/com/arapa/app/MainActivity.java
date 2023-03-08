@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements Serializable, MyA
         sortedSchool = new ArrayList<>();
         init_data();
 
+
         recyclerView = findViewById(R.id.school_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new MyAdapter(this, sortedSchool, this);
