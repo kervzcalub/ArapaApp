@@ -12,6 +12,7 @@ public class School implements Serializable {
     double longitude;
 
     String facebook, instagram, other_site, other_contact;
+    String requirements;
 
     public double getDistance() {
         return distance;
@@ -156,6 +157,14 @@ public class School implements Serializable {
 
     public void setOther_contact(String other_contact) {
         this.other_contact = other_contact;
+    }
+
+    public String getRequirements() {
+        return requirements;
+    }
+
+    public void setRequirements(String requirements) {
+        this.requirements = requirements;
     }
 
 

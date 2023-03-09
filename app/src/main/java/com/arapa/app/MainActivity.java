@@ -100,9 +100,10 @@ public class MainActivity extends AppCompatActivity implements Serializable, MyA
 
                 for (int j = 0; j < schoolArray.length(); j++) {
                     JSONObject schoolData = schoolArray.getJSONObject(j);
-                    int status = schoolData.getInt("status");
-                    // newly added school should be approved first by the admin
-                    if (status == 1) { // 1=approved, 0=not approved
+                    int status = schoolData.getInt("status"); // 1=approved, 0=not approved
+                    int lockstatus = schoolData.getInt("lockstatus"); // 1=locked, 0=not locked
+                    // if school is approved and not locked
+                    if (status == 1 && lockstatus == 0) {
                         JSONArray courses = schoolData.getJSONArray("Courses");
                         ArrayList<String> courseList = new ArrayList<>();
                         if (courseList.size() > 0) {

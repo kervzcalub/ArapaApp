@@ -8,6 +8,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.arapa.app.fragments.AboutFragment;
 import com.arapa.app.fragments.ContactFragment;
 import com.arapa.app.fragments.CoursesFragment;
+import com.arapa.app.fragments.RequirementFragment;
 import com.arapa.app.util.School;
 
 public class PagerAdapter extends FragmentStateAdapter {
@@ -29,12 +30,14 @@ public class PagerAdapter extends FragmentStateAdapter {
             case 1:
                 return new CoursesFragment(school);
             case 2:
+                return new RequirementFragment(school);
+            case 3:
                 return new ContactFragment(school);
         }
     }
 
     @Override
     public int getItemCount() {
-        return 3;
+        return 4;
     }
 }

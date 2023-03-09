@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,6 +12,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -492,37 +494,37 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
             initSchoolListView();
             return;
         }
-        ArrayList<School> filteredList = filterByType(selectedTypes);
-        setup_search_cursor(filteredList);
-        nearestSchool.clear();
-        for (int i = 0; i < filteredList.size(); i++) {
-            if(nearestSchool.size() <= 5){
-                nearestSchool.add(filteredList.get(i));
-            }
-            String name = filteredList.get(i).getName();
-            double longitude = filteredList.get(i).getLongitude();
-            double latitude = filteredList.get(i).getLatitude();
-            String type = filteredList.get(i).getType();
-            Log.d("ARAPA", "FILTERED: " + type);
-
-            //"Primary", "High School", "Senior High School", "College"
-            switch (type) {
-                case "Primary":
-                    add_marker(name, type, R.drawable.primary_marker, latitude, longitude);
-                    break;
-                case "High School":
-                    add_marker(name, type, R.drawable.highschool_marker, latitude, longitude);
-                    break;
-                case "Senior High School":
-                    add_marker(name, type, R.drawable.senior_high_marker, latitude, longitude);
-                    break;
-                case "College":
-                    add_marker(name, type, R.drawable.college_marker, latitude, longitude);
-                    break;
-            }
-
-        }
-        myAdapter.notifyDataSetChanged();
+        //ArrayList<School> filteredList = filterByType(selectedTypes);
+        new FilterSchoolsTask(this).execute(selectedTypes);
+//        setup_search_cursor(filteredList);
+//        nearestSchool.clear();
+//        for (int i = 0; i < filteredList.size(); i++) {
+//            if(nearestSchool.size() <= 5){
+//                nearestSchool.add(filteredList.get(i));
+//            }
+//            String name = filteredList.get(i).getName();
+//            double longitude = filteredList.get(i).getLongitude();
+//            double latitude = filteredList.get(i).getLatitude();
+//            String type = filteredList.get(i).getType();
+//
+//            //"Primary", "High School", "Senior High School", "College"
+//            switch (type) {
+//                case "Primary":
+//                    add_marker(name, type, R.drawable.primary_marker, latitude, longitude);
+//                    break;
+//                case "High School":
+//                    add_marker(name, type, R.drawable.highschool_marker, latitude, longitude);
+//                    break;
+//                case "Senior High School":
+//                    add_marker(name, type, R.drawable.senior_high_marker, latitude, longitude);
+//                    break;
+//                case "College":
+//                    add_marker(name, type, R.drawable.college_marker, latitude, longitude);
+//                    break;
+//            }
+//
+//        }
+//        myAdapter.notifyDataSetChanged();
     }
 
     private ArrayList<School> filterByType(boolean[] selectedTypes) {
@@ -540,6 +542,61 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
         return filteredList;
     }
 
+    private class FilterSchoolsTask extends AsyncTask<boolean[], Void, ArrayList<School>> {
+
+        private ProgressDialog progressDialog;
+        private Context context;
+
+        private FilterSchoolsTask(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected ArrayList<School> doInBackground(boolean[]... selectedTypes) {
+            return filterByType(selectedTypes[0]);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = ProgressDialog.show(context, "Filtering schools", "Please wait...", true);
+        }
+
+
+        @Override
+        protected void onPostExecute(ArrayList<School> result) {
+            setup_search_cursor(result);
+            nearestSchool.clear();
+            for (int i = 0; i < result.size(); i++) {
+                if(nearestSchool.size() <= 5){
+                    nearestSchool.add(result.get(i));
+                }
+                String name = result.get(i).getName();
+                double longitude = result.get(i).getLongitude();
+                double latitude = result.get(i).getLatitude();
+                String type = result.get(i).getType();
+
+                //"Primary", "High School", "Senior High School", "College"
+                switch (type) {
+                    case "Primary":
+                        add_marker(name, type, R.drawable.primary_marker, latitude, longitude);
+                        break;
+                    case "High School":
+                        add_marker(name, type, R.drawable.highschool_marker, latitude, longitude);
+                        break;
+                    case "Senior High School":
+                        add_marker(name, type, R.drawable.senior_high_marker, latitude, longitude);
+                        break;
+                    case "College":
+                        add_marker(name, type, R.drawable.college_marker, latitude, longitude);
+                        break;
+                }
+
+            }
+            myAdapter.notifyDataSetChanged();
+            progressDialog.dismiss();
+        }
+    }
 
     @Override
     public void itemSelected(School school) {
@@ -547,4 +604,6 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
         intent.putExtra("SCHOOL", school);
         startActivity(intent);
     }
+
+
 }

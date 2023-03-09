@@ -87,6 +87,7 @@ public class SplashActivity extends AppCompatActivity {
                         for (QueryDocumentSnapshot document : task.getResult()) {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             JSONObject schoolObj = new JSONObject(document.getData());
+
                             schoolObj.put("school_id", document.getId());
                             schoolArray.put(schoolObj);
                         }

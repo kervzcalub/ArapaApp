@@ -69,6 +69,7 @@ public class ActivityBase extends AppCompatActivity {
                         String email = schoolData.getString("Email");
                         String type = schoolData.getString("SchoolType");
                         String web = schoolData.getString("Weblink");
+                        String requirements = schoolData.getString("requirements");
                         JSONArray mapData = schoolData.getJSONArray("Map");
                         double latitude = mapData.getJSONObject(0).getDouble("Lat");
                         double longitude = mapData.getJSONObject(0).getDouble("Lng");
@@ -86,6 +87,10 @@ public class ActivityBase extends AppCompatActivity {
                         }
                         if (schoolData.has("OtherSites")) {
                             school.setOther_site(schoolData.getString("OtherSites"));
+                        }
+
+                        if (schoolData.has("requirements")) {
+                            school.setRequirements(requirements);
                         }
                     }
                 }
