@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,6 +85,7 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
     private LocationComponent locationComponent;
     private LocationComponentActivationOptions locationComponentActivationOptions;
 
+    private ProgressBar progressBar;
     private SearchTask searchtask;
 
     private MaterialCheckBox primary_checkbox, highschool_checkbox, seniorhigh_checkbox, college_checkbox;
@@ -91,7 +94,7 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
     private MyAdapter myAdapter;
 
     private ArrayList<School> schoolSearchList;
-    private ArrayList<School> nearestSchool;
+    private ArrayList<School> filteredSchoolList;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -147,19 +150,19 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
 
     @SuppressLint("ClickableViewAccessibility")
     private void initSchoolListView() {
-        nearestSchool = new ArrayList<>();
-        if(nearestSchool.size() > 0){
-            nearestSchool.clear();
+        filteredSchoolList = new ArrayList<>();
+        if(filteredSchoolList.size() > 0){
+            filteredSchoolList.clear();
         }
         for(School schools : schoolSearchList){
-            //add 5 schools to nearestSchool list
-            if(nearestSchool.size() < 5){
-                nearestSchool.add(schools);
+            //add 5 schools to filteredSchoolList list
+            if(filteredSchoolList.size() < 5){
+                filteredSchoolList.add(schools);
             }
         }
         schoolListView = findViewById(R.id.school_list);
         schoolListView.setLayoutManager(new LinearLayoutManager(this));
-        myAdapter = new MyAdapter(this, nearestSchool, this);
+        myAdapter = new MyAdapter(this, filteredSchoolList, this);
         schoolListView.setAdapter(myAdapter);
         schoolListView.setOnTouchListener(new ListView.OnTouchListener() {
             @Override
@@ -182,6 +185,8 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
                 return true;
             }
         });
+        progressBar = findViewById(R.id.myProgressBar);
+        progressBar.setVisibility(View.GONE);
     }
 
     private void sortByDistance() {
@@ -416,8 +421,33 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        searchtask = (SearchTask) new SearchTask(HomeActivity.this, schoolSearchList, cursor_adapter)
-                .execute(newText);
+        progressBar.setVisibility(View.VISIBLE);
+        schoolListView.setVisibility(View.GONE);
+        searchtask = (SearchTask) new SearchTask(HomeActivity.this, schoolSearchList, cursor_adapter);
+        searchtask.setResultListener(new SearchTask.ResultListener() {
+            @Override
+            public void onResult(ArrayList<School> schools) {
+                if (newText == null || newText.equals("")) {
+                    initSchoolListView();
+                } else {
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            filteredSchoolList.clear();
+                            for (int i = 0; i < schools.size(); i++) {
+                                if (filteredSchoolList.size() <= 5) {
+                                    filteredSchoolList.add(schools.get(i));
+                                }
+                            }
+                            myAdapter.notifyDataSetChanged();
+                        }
+                    }, 3000);
+                }
+                progressBar.setVisibility(View.GONE);
+                schoolListView.setVisibility(View.VISIBLE);
+            }
+        });
+        searchtask.execute(newText);
 //        if (newText.equals("")) {
 //            details_holder.setVisibility(View.GONE);
 //        }
@@ -497,10 +527,10 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
         //ArrayList<School> filteredList = filterByType(selectedTypes);
         new FilterSchoolsTask(this).execute(selectedTypes);
 //        setup_search_cursor(filteredList);
-//        nearestSchool.clear();
+//        filteredSchoolList.clear();
 //        for (int i = 0; i < filteredList.size(); i++) {
-//            if(nearestSchool.size() <= 5){
-//                nearestSchool.add(filteredList.get(i));
+//            if(filteredSchoolList.size() <= 5){
+//                filteredSchoolList.add(filteredList.get(i));
 //            }
 //            String name = filteredList.get(i).getName();
 //            double longitude = filteredList.get(i).getLongitude();
@@ -566,10 +596,10 @@ public class HomeActivity extends ActivityBase implements OnMapReadyCallback, Se
         @Override
         protected void onPostExecute(ArrayList<School> result) {
             setup_search_cursor(result);
-            nearestSchool.clear();
+            filteredSchoolList.clear();
             for (int i = 0; i < result.size(); i++) {
-                if(nearestSchool.size() <= 5){
-                    nearestSchool.add(result.get(i));
+                if(filteredSchoolList.size() <= 5){
+                    filteredSchoolList.add(result.get(i));
                 }
                 String name = result.get(i).getName();
                 double longitude = result.get(i).getLongitude();

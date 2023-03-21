@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.arapa.app.ui.MyCursorAdapter;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,8 +15,17 @@ import java.util.Comparator;
 public class SearchTask extends AsyncTask<String, Void, MatrixCursor> {
 
     private Context context;
+
     private ArrayList<School> schoolArrayList;
+    private ArrayList<School> resultList;
     private MyCursorAdapter cursor_adapter;
+
+    private ResultListener resultListener;
+
+    public void setResultListener(ResultListener resultListener) {
+        this.resultListener = resultListener;
+    }
+
 
     public SearchTask(Context context, ArrayList<School> schoolArrayList, MyCursorAdapter cursor_adapter) {
         this.context = context;
@@ -29,7 +39,6 @@ public class SearchTask extends AsyncTask<String, Void, MatrixCursor> {
         for (School school : schoolArrayList) {
             if (school.getName().toLowerCase().contains(newText.toLowerCase()) ||
                     school.getAddress().toLowerCase().contains(newText.toLowerCase())) {
-
                 matchingSchools.add(school);
             }
         }
@@ -60,6 +69,8 @@ public class SearchTask extends AsyncTask<String, Void, MatrixCursor> {
             cursor.addRow(new Object[] {i, school.getName(), school.getAddress(), school.getDistance(), Utils.getBitmapAsByteArray(Utils.getSchoolLogo(context, school)), school.getSchool_id()});
         }
 
+        resultList = matchingSchools;
+
         return cursor;
     }
 
@@ -67,5 +78,11 @@ public class SearchTask extends AsyncTask<String, Void, MatrixCursor> {
     protected void onPostExecute(MatrixCursor cursor) {
         cursor_adapter.changeCursor(cursor);
         cursor_adapter.notifyDataSetChanged();
+        if(resultListener != null)
+            resultListener.onResult(resultList);
+    }
+
+    public interface ResultListener {
+        void onResult(ArrayList<School> schools);
     }
 }
